@@ -1,28 +1,44 @@
 const express = require('express');
 const router = express.Router();
 
-// Import the Controller
-const {
-    getAllDishes,
-    createDish,
-    getDishById,
-    updateDish,
-    deleteDish,
+// Import controllers here...
+const { protect, authorize } = require('../middleware/authMiddleware');
+
+// ANYONE can get dishes
+
+
+// ONLY Admins and Managers can create dishes
+
+
+const { 
+    getAllDishes, 
+    createDish, 
+    getDishById, 
+    updateDish, 
+    deleteDish 
 } = require('../controllers/dishController');
+const {
+    getAllChefs,
+    createChef,
+    getChefById,
+    updateChef,
+    deleteChef
+} = require('../controllers/chefController');
 
-// 1. If user goes to GET / (Show menu) -> Ask Chef to getAllDishes
+// Define Routes for the Restaurant App
+
+// Dish Routes
 router.get('/dishes', getAllDishes);
-
-// 2. If user sends POST / (New Order) -> Ask Chef to creatDish
-router.post('/dishes', createDish);
-
-// 3. If user goes to GET /:id (Ask for specific meal) -> Ask Chef to getDishById
+router.post('/dishes', protect, authorize('admin', 'manager'), createDish);
 router.get('/dishes/:id', getDishById);
-
-// 4. If user sends PUT /:id (Change meal) -> Ask Chef to updateDish
 router.put('/dishes/:id', updateDish);
-
-// 5. If user sends DELETE /:id (Cancal meal) -> Ask Chef to deleteDish
 router.delete('/dishes/:id', deleteDish);
 
-module.exports = router; 
+// Chef Routes
+router.get('/chef', getAllChefs);
+router.post('/chef', createChef);
+router.get('/chef/:id', getChefById);
+router.put('/chef/:id', updateChef);
+router.delete('/chef/:id', deleteChef);
+
+module.exports = router;
